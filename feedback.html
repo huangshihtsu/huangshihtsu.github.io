@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUBPOCALYPSE — Field Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --acid: #e6da1c; --ink: #0a0a0a; --bone: #f2f0e6; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow-x: hidden; }
+  body {
+    background: var(--ink); color: var(--bone);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh; display: flex; justify-content: center;
+    padding: 48px 20px 80px;
+  }
+  main { width: 100%; max-width: 560px; min-width: 0; }
+  .kicker { color: var(--acid); font-size: 12px; letter-spacing: .25em; text-transform: uppercase; }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: clamp(34px, 7vw, 52px); line-height: .95;
+    margin: 14px 0 10px; text-transform: uppercase;
+  }
+  h1 span { color: var(--acid); }
+  .sub { color: #8a8a80; font-size: 14px; line-height: 1.6; margin-bottom: 40px; }
+  label { display: block; font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: #8a8a80; margin: 28px 0 10px; }
+  .skulls { display: flex; gap: 10px; }
+  .skulls button {
+    background: none; border: 1px solid #333; color: #555;
+    font-size: 22px; width: 52px; height: 52px; cursor: pointer;
+    transition: all .15s;
+  }
+  .skulls button.on { border-color: var(--acid); color: var(--acid); background: rgba(230,218,28,.08); transform: translateY(-2px); }
+  input[type=text], input[type=email], textarea {
+    width: 100%; background: #111; border: 1px solid #2a2a2a; color: var(--bone);
+    font-family: 'Space Mono', monospace; font-size: 15px; padding: 14px;
+    outline: none; resize: vertical;
+  }
+  input:focus, textarea:focus { border-color: var(--acid); }
+  textarea { min-height: 120px; }
+  .hint { font-size: 11px; color: #555; margin-top: 6px; }
+  .submit {
+    margin-top: 36px; width: 100%; padding: 18px;
+    background: var(--acid); color: var(--ink); border: none; cursor: pointer;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 15px;
+    letter-spacing: .2em; text-transform: uppercase;
+  }
+  .submit:hover { filter: brightness(1.1); }
+  .submit:disabled { opacity: .4; cursor: wait; }
+  #done { display: none; text-align: center; padding: 80px 0; }
+  #done h1 { font-size: clamp(40px, 9vw, 64px); }
+  #done p { color: #8a8a80; margin-top: 16px; line-height: 1.7; }
+  #err { display: none; color: #ff5544; font-size: 13px; margin-top: 14px; }
+  footer { margin-top: 60px; font-size: 11px; color: #444; letter-spacing: .1em; }
+</style>
+</head>
+<body>
+<main>
+  <form id="fb-form">
+    <div class="kicker">SUBPOCALYPSE · Closed Beta</div>
+    <h1>Field<br>Report<span>.</span></h1>
+    <p class="sub">60 seconds. Tell us what broke, what confused you, and what felt good.
+    Your report goes straight to the kill team.</p>
+
+    <label>Overall verdict</label>
+    <div class="skulls" id="skulls">
+      <button type="button" data-v="1">💀</button>
+      <button type="button" data-v="2">💀</button>
+      <button type="button" data-v="3">💀</button>
+      <button type="button" data-v="4">💀</button>
+      <button type="button" data-v="5">💀</button>
+    </div>
+    <div class="hint">1 = it died instead · 5 = cathartic masterpiece</div>
+
+    <label for="device">Your device</label>
+    <input type="text" id="device" placeholder="e.g. Pixel 8, Android 15">
+
+    <label for="message">What happened?</label>
+    <textarea id="message" placeholder="Crashes, confusion, things that felt great — anything. Was the long-press kill obvious?" required></textarea>
+
+    <label for="email">Email (optional)</label>
+    <input type="email" id="email" placeholder="only if you want a reply">
+
+    <button class="submit" type="submit">File Report →</button>
+    <div id="err">Transmission failed. Check your connection and try again.</div>
+  </form>
+
+  <div id="done">
+    <h1>Report<br>Filed<span>.</span></h1>
+    <p>The kill team reads every report.<br>Now go execute another subscription. 💀🟡</p>
+  </div>
+
+  <footer>SUBPOCALYPSE © 2026 · KILL YOUR SUBSCRIPTIONS</footer>
+</main>
+
+<script>
+(function () {
+  const SB_URL = 'https://iyfeudixftqnbvitopme.supabase.co';
+  const SB_KEY = 'sb_publishable_DN_PBoiHRUwChdy2AoiNXQ_v6qE51wz';
+  const SB_TABLE = 'subpocalypse_feedback';
+
+  let rating = 0;
+  const skulls = document.querySelectorAll('#skulls button');
+  skulls.forEach(function (b) {
+    b.addEventListener('click', function () {
+      rating = parseInt(b.dataset.v, 10);
+      skulls.forEach(function (s) { s.classList.toggle('on', parseInt(s.dataset.v, 10) <= rating); });
+    });
+  });
+
+  document.getElementById('fb-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const btn = document.querySelector('.submit');
+    const err = document.getElementById('err');
+    err.style.display = 'none';
+    btn.disabled = true;
+
+    const body = {
+      rating: rating || null,
+      device: document.getElementById('device').value.trim() || null,
+      message: document.getElementById('message').value.trim(),
+      email: document.getElementById('email').value.trim() || null,
+    };
+    if (!body.message) { btn.disabled = false; return; }
+
+    try {
+      const res = await fetch(SB_URL + '/rest/v1/' + SB_TABLE, {
+        method: 'POST',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify(body),
+      });
+      if (res.status !== 201) throw new Error('supabase ' + res.status);
+      document.getElementById('fb-form').style.display = 'none';
+      document.getElementById('done').style.display = 'block';
+      window.scrollTo(0, 0);
+    } catch (ex) {
+      console.warn(ex);
+      err.style.display = 'block';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

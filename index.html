@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<title>SUBPOCALYPSE — Kill your subscriptions</title>
+<meta name="description" content="We find every recurring charge hiding in your inbox. Then we kill it. On-device only — nothing leaves your phone.">
+<link rel="icon" href="app/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+<header class="topbar">
+  <span class="wordmark">SUBPOCALYPSE</span>
+  <a class="toplink" href="#waitlist">JOIN WAITLIST</a>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <p class="kicker">THE SUBSCRIPTION RECKONING · 2026</p>
+  <h1 class="hero-title">
+    <span>KILL</span>
+    <span>YOUR</span>
+    <span class="stroke">SUB&shy;SCRIPTIONS.</span>
+  </h1>
+  <div class="hero-meta">
+    <div class="hm">
+      <span class="hm-num mono" data-count="219">$0</span>
+      <span class="hm-label">WASTED / MO BY THE<br>AVERAGE US HOUSEHOLD</span>
+    </div>
+    <div class="hm">
+      <span class="hm-num mono" data-count="84">0%</span>
+      <span class="hm-label">CAN'T NAME ALL THEIR<br>RECURRING CHARGES</span>
+    </div>
+    <div class="hm">
+      <span class="hm-num mono" data-count="0" data-static="$0">$0</span>
+      <span class="hm-label">DATA THAT EVER LEAVES<br>YOUR PHONE</span>
+    </div>
+  </div>
+  <p class="hero-sub">An app that finds every recurring charge hiding in your inbox — then lets you execute them, one satisfying hold at a time.</p>
+  <a class="hero-cta mono" href="#demo">TRY THE REAL APP ↓</a>
+</section>
+
+<!-- ============ LIVE DEMO ============ -->
+<section class="demo" id="demo">
+  <div class="demo-copy">
+    <p class="kicker">LIVE SPECIMEN</p>
+    <h2 class="sec-title">This is not a mockup.<br>It's the app. <em>Play with it.</em></h2>
+    <ol class="demo-steps">
+      <li><span class="mono ds-n">01</span>Hit <b>SCAN MY INBOX</b> and watch the damage surface</li>
+      <li><span class="mono ds-n">02</span>Read the red flags — unused days, price hikes, free alternatives</li>
+      <li><span class="mono ds-n">03</span>Enter <b>KILL MODE</b> and hold a card to execute it</li>
+      <li><span class="mono ds-n">04</span>Collect your share card. Post it. Watch friends panic-scan.</li>
+    </ol>
+    <p class="demo-note">Demo runs on sample data. The shipped app reads your inbox on-device — no cloud, no account, nothing held by us.</p>
+  </div>
+  <div class="demo-frame">
+    <div class="frame-bezel">
+      <iframe src="app/index.html" title="SUBPOCALYPSE live demo" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRINCIPLES ============ -->
+<section class="principles">
+  <p class="kicker center">FIELD MANUAL</p>
+  <div class="pr-row">
+    <span class="pr-num mono">01</span>
+    <span class="pr-name">ON-DEVICE FORENSICS</span>
+    <span class="pr-desc">Your inbox is parsed locally. We couldn't leak your data if we wanted to — we never see it.</span>
+  </div>
+  <div class="pr-row">
+    <span class="pr-num mono">02</span>
+    <span class="pr-name">RED FLAG RADAR</span>
+    <span class="pr-desc">Unused for 94 days? Price up 23% in two years? Free alternative exists? We say it to your face.</span>
+  </div>
+  <div class="pr-row">
+    <span class="pr-num mono">03</span>
+    <span class="pr-name">EXECUTION SCRIPTS</span>
+    <span class="pr-desc">Step-by-step kill instructions for every service — including the ones that make you cancel by certified mail.</span>
+  </div>
+  <div class="pr-row">
+    <span class="pr-num mono">04</span>
+    <span class="pr-name">SAVINGS YOU CAN BRAG ABOUT</span>
+    <span class="pr-desc">Every kill mints a receipt of violence. Sharing it is the entire growth strategy.</span>
+  </div>
+</section>
+
+<!-- ============ WAITLIST ============ -->
+<section class="waitlist" id="waitlist">
+  <p class="kicker center">FIRST BLOOD</p>
+  <h2 class="sec-title center">The first 10,000 hunters<br>get <em>Pro free for a year.</em></h2>
+  <form class="wl-form" id="wl-form">
+    <input type="email" id="wl-email" placeholder="your@email.com" required autocomplete="email">
+    <button type="submit" class="wl-btn mono">JOIN</button>
+  </form>
+  <p class="wl-success mono hidden" id="wl-success">✓ YOU'RE IN · HUNTER #<span id="wl-num"></span></p>
+  <p class="wl-count"><span class="mono accent" id="wl-count">0</span> ALREADY WAITING</p>
+</section>
+
+<footer class="footer">
+  <span class="mono">SUBPOCALYPSE</span>
+  <span class="mono dim">YOUR DATA DIES WITH THIS APP</span>
+  <a class="mono dim" href="privacy.html" style="color:inherit;text-decoration:none">PRIVACY</a>
+  <span class="mono dim">© 2026</span>
+</footer>
+
+<script src="landing.js"></script>
+</body>
+</html>

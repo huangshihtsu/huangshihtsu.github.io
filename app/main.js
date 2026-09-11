@@ -29,7 +29,7 @@ const SUBS = [
     hist: [11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99],
     steps: ['dropbox.com → avatar → Settings → Plan.', '<em>Cancel plan</em> at the very bottom.', 'Download anything over 2GB before the downgrade.', 'iCloud / Google Drive free tiers cover most people.'] },
   { name: 'Paramount+',      mono: 'P+', price: 11.99, day: 2,  flags: ['UNUSED 112 DAYS'],
-    hist: [9.99,9.99,9.99,9.99,9.99,9.99,9.99,9.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99],
+    hist: [9.99,9.99,9.99,9.99,9.99,9.99,9.99,9.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99,11.99],
     steps: ['paramountplus.com → Account → Subscription.', '<em>Cancel Subscription</em> → confirm twice.', 'If you subscribed via Apple/Google, cancel there instead.', 'It has been 112 days. The shows will survive without you.'] },
   { name: 'NYT Games',       mono: 'NY', price: 5.99,  day: 19, flags: [],
     hist: [5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99,5.99],
@@ -474,6 +474,29 @@ function nextKillCard() {
   });
 
   bindHold(card, s, idx);
+  // discoverability: ghost-press the hold bar until the user's first kill
+  if (state.killed.length === 0) ghostHint(card);
+}
+
+function ghostHint(card) {
+  card.dataset.ghost = '1';
+  let loops = 0;
+  const tick = () => {
+    if (card.dataset.ghost !== '1' || loops >= 2) return;
+    loops++;
+    const el = card.querySelector('#hold-fill');
+    if (!el) return;
+    card.classList.add('squeezing');
+    el.style.transition = `width 0.65s ${EASE}`;
+    el.style.width = '42%';
+    setTimeout(() => {
+      el.style.transition = `width 0.35s ${EASE}`;
+      el.style.width = '0%';
+      card.classList.remove('squeezing');
+      setTimeout(tick, 1400);
+    }, 780);
+  };
+  setTimeout(tick, 900);
 }
 
 let holdRAF = null;
@@ -501,7 +524,14 @@ function bindHold(card, sub, idx) {
     holdRAF = requestAnimationFrame(step);
   }
 
-  function down(e) { e.preventDefault(); start = null; holdRAF = requestAnimationFrame(step); }
+  function down(e) {
+    e.preventDefault();
+    card.dataset.ghost = ''; // user found the gesture — stop the demo
+    const f = fill();
+    if (f) { f.style.transition = 'none'; f.style.width = '0%'; }
+    start = null;
+    holdRAF = requestAnimationFrame(step);
+  }
   function cancel() {
     if (holdRAF) cancelAnimationFrame(holdRAF);
     holdRAF = null;

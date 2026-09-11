@@ -35,8 +35,8 @@ document.querySelectorAll('.hm-num').forEach((el) => statsObserver.observe(el));
 
 const WL_KEY = 'subpocalypse.waitlist';
 const BASE_COUNT = 4841; // display base — replace with real count once API exposes it
-const SB_URL = 'https://iyfeudixftqnbvitopme.supabase.co';
-const SB_KEY = 'sb_publishable_DN_PBoiHRUwChdy2AoiNXQ_v6qE51wz';
+const SB_URL = 'https://cginoxngltunrfdmoodu.supabase.co';
+const SB_KEY = 'sb_publishable_6q-GPW_kWz7vI_bom1vyGA_jFfno5sE';
 const SB_TABLE = 'subpocalypse_waitlist';
 
 function getList() {

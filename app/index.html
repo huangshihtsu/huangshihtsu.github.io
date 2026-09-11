@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>SUBPOCALYPSE — Kill your subscriptions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <canvas id="fx" class="fx"></canvas>
+
+    <!-- ============ SCREEN: WELCOME ============ -->
+    <section class="screen active" id="scr-welcome">
+      <div class="welcome-grid" aria-hidden="true">
+        <span class="frag f1">S</span><span class="frag f2">U</span><span class="frag f3">B</span>
+        <span class="frag f4">P</span><span class="frag f5">O</span><span class="frag f6">C</span>
+        <span class="frag f7">A</span><span class="frag f8">L</span><span class="frag f9">Y</span>
+        <span class="frag f10">P</span><span class="frag f11">S</span><span class="frag f12">E</span>
+        <svg class="frag-lines" viewBox="0 0 390 700" preserveAspectRatio="none">
+          <line x1="40" y1="120" x2="350" y2="60"></line>
+          <line x1="350" y1="60" x2="60" y2="620"></line>
+          <line x1="60" y1="620" x2="330" y2="560"></line>
+          <line x1="330" y1="560" x2="40" y2="120"></line>
+          <line x1="200" y1="330" x2="40" y2="120"></line>
+          <line x1="200" y1="330" x2="330" y2="560"></line>
+        </svg>
+      </div>
+      <div class="welcome-body">
+        <p class="kicker">THE SUBSCRIPTION RECKONING</p>
+        <h1 class="welcome-title">Your subscriptions are<br><em>bleeding</em> you dry.</h1>
+        <p class="welcome-sub">We find every recurring charge hiding in your inbox. Then we kill it. On-device only — nothing leaves this phone.</p>
+        <button class="btn-primary" id="btn-scan">SCAN MY INBOX</button>
+        <p class="privacy-line"><span class="dot"></span>ON-DEVICE ANALYSIS · NO CLOUD · NO ACCOUNT</p>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN: SCAN ============ -->
+    <section class="screen" id="scr-scan">
+      <header class="screen-head">
+        <p class="kicker">SCANNING INBOX</p>
+        <p class="scan-pct" id="scan-pct">0%</p>
+      </header>
+      <div class="scan-stream" id="scan-stream"></div>
+      <div class="scan-progress"><div class="scan-bar" id="scan-bar"></div></div>
+      <div class="scan-found">
+        <p class="kicker dim">RECURRING CHARGES FOUND</p>
+        <ul class="found-list" id="found-list"></ul>
+        <div class="found-total">
+          <span>MONTHLY BLEED</span>
+          <span class="mono" id="found-total">$0.00</span>
+        </div>
+      </div>
+      <button class="btn-primary hidden" id="btn-report">SEE THE DAMAGE</button>
+    </section>
+
+    <!-- ============ SCREEN: REPORT (LEAK DASHBOARD) ============ -->
+    <section class="screen" id="scr-report">
+      <header class="screen-head">
+        <p class="kicker">LEAK REPORT · SEPT 2026</p>
+      </header>
+      <div class="bleed-hero">
+        <div class="bleed-amount">
+          <span class="mono bleed-num" id="bleed-num">$0</span>
+          <span class="bleed-per">/MO</span>
+        </div>
+        <p class="bleed-label">LEAVING YOUR ACCOUNT EVERY MONTH</p>
+        <div class="drips" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p class="bleed-year">THAT'S <span class="mono" id="bleed-year">$0</span> A YEAR</p>
+      </div>
+      <div class="upcoming">
+        <p class="kicker dim">NEXT 14 DAYS</p>
+        <div class="up-strip" id="up-strip"></div>
+      </div>
+      <ul class="leak-list" id="leak-list"></ul>
+      <button class="btn-primary" id="btn-killmode">START KILLING</button>
+    </section>
+
+    <!-- ============ SCREEN: KILL MODE ============ -->
+    <section class="screen" id="scr-kill">
+      <header class="screen-head row">
+        <div>
+          <p class="kicker">KILL MODE</p>
+          <p class="kill-streak mono" id="kill-streak">STREAK ×0</p>
+        </div>
+        <div class="saved-box">
+          <p class="kicker dim">SAVED /YR</p>
+          <p class="saved-num mono" id="saved-num">$0</p>
+        </div>
+      </header>
+      <div class="kill-arena" id="kill-arena">
+        <div class="kill-card" id="kill-card"></div>
+        <p class="kill-hint" id="kill-hint">HOLD TO KILL</p>
+      </div>
+      <div class="kill-actions">
+        <button class="btn-ghost" id="btn-keep">KEEP IT</button>
+        <button class="btn-ghost hidden" id="btn-finish">FINISH →</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN: SAVED / SUMMARY ============ -->
+    <section class="screen" id="scr-saved">
+      <header class="screen-head">
+        <p class="kicker">DAMAGE REVERSED</p>
+      </header>
+      <div class="saved-hero">
+        <p class="saved-big mono" id="saved-big">$0</p>
+        <p class="bleed-label">BACK IN YOUR POCKET EVERY YEAR</p>
+      </div>
+      <div class="badge-section">
+        <p class="kicker dim">VAMPIRES SLAIN · <span id="badge-count">0</span></p>
+        <div class="badge-grid" id="badge-grid"></div>
+      </div>
+      <button class="btn-primary" id="btn-share">MAKE MY SHARE CARD</button>
+    </section>
+
+    <!-- ============ SCREEN: SHARE CARD ============ -->
+    <section class="screen" id="scr-share">
+      <header class="screen-head">
+        <p class="kicker">YOUR RECEIPT OF VIOLENCE</p>
+      </header>
+      <div class="share-wrap">
+        <canvas id="share-canvas" width="540" height="675"></canvas>
+      </div>
+      <div class="share-actions">
+        <button class="btn-primary" id="btn-download">DOWNLOAD PNG</button>
+        <button class="btn-ghost" id="btn-again">RUN IT BACK</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN: YOU / SETTINGS ============ -->
+    <section class="screen" id="scr-you">
+      <header class="screen-head">
+        <p class="kicker">YOU</p>
+      </header>
+      <div class="you-hero">
+        <p class="you-stat-label kicker dim">LIFETIME RECOVERED</p>
+        <p class="you-stat mono" id="you-saved">$0</p>
+        <p class="you-sub" id="you-sub-line">0 VAMPIRES SLAIN · FREE PLAN</p>
+      </div>
+      <div class="you-rows">
+        <button class="you-row accent-row" id="row-pro">
+          <span>SUBPOCALYPSE PRO</span>
+          <span class="mono you-row-val" id="pro-status">$4.99/MO →</span>
+        </button>
+        <div class="you-row">
+          <span>ANALYSIS MODE</span>
+          <span class="mono you-row-val">ON-DEVICE</span>
+        </div>
+        <div class="you-row">
+          <span>CLOUD SYNC</span>
+          <span class="mono you-row-val">NEVER</span>
+        </div>
+        <div class="you-row">
+          <span>DATA HELD BY US</span>
+          <span class="mono you-row-val">NOTHING</span>
+        </div>
+        <button class="you-row" id="row-rescan">
+          <span>RE-SCAN INBOX</span>
+          <span class="mono you-row-val">↻</span>
+        </button>
+        <button class="you-row danger" id="row-reset">
+          <span>BURN ALL DATA</span>
+          <span class="mono you-row-val">×</span>
+        </button>
+      </div>
+      <p class="you-foot mono">SUBPOCALYPSE v1.0 · YOUR DATA DIES WITH THIS APP</p>
+    </section>
+
+    <!-- ============ SCREEN: PAYWALL ============ -->
+    <section class="screen" id="scr-paywall">
+      <header class="screen-head">
+        <p class="kicker">GO PRO</p>
+      </header>
+      <div class="pay-hero">
+        <p class="pay-title">PRO</p>
+        <p class="pay-irony">Yes — a subscription that kills subscriptions.<br>We see the irony. We priced it anyway.</p>
+      </div>
+      <ul class="pay-features">
+        <li><span class="mono pf-k">AUTO-KILL</span>We email the cancellation for you</li>
+        <li><span class="mono pf-k">HIKE ALERT</span>Price increases caught within 24h</li>
+        <li><span class="mono pf-k">NEGOTIATOR</span>Scripts that cut bills ~30% on average</li>
+        <li><span class="mono pf-k">PLAN DOCTOR</span>Family / duo plan optimization</li>
+      </ul>
+      <div class="pay-price-line">
+        <span class="mono pay-price">$4.99</span><span class="pay-per">/MO · CANCEL IRONICALLY EASY</span>
+      </div>
+      <button class="btn-primary" id="btn-subscribe">SUBSCRIBE (SIMULATED)</button>
+      <button class="btn-ghost" id="btn-pay-back">NOT TODAY</button>
+    </section>
+
+    <!-- ============ DETAIL SHEET (overlay) ============ -->
+    <div class="sheet-veil" id="sheet-veil"></div>
+    <aside class="sheet" id="sheet">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head">
+        <span class="sheet-mono mono" id="dt-mono">HF</span>
+        <div class="sheet-title">
+          <p class="sheet-name" id="dt-name">HelloFresh</p>
+          <p class="sheet-price mono" id="dt-price">$59.80/MO</p>
+        </div>
+      </div>
+      <div class="sheet-flags" id="dt-flags"></div>
+      <div class="sheet-block">
+        <p class="kicker dim">PRICE HISTORY · 24 MO</p>
+        <canvas id="dt-chart" width="640" height="120"></canvas>
+      </div>
+      <div class="sheet-block">
+        <p class="kicker dim">HOW TO KILL IT MANUALLY</p>
+        <ol class="dt-steps" id="dt-steps"></ol>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-primary" id="dt-kill">KILL IT · <span id="dt-save">$0</span>/YR</button>
+        <button class="btn-ghost" id="dt-close">NOT YET</button>
+      </div>
+    </aside>
+
+    <!-- ============ TAB BAR ============ -->
+    <nav class="tabbar hidden" id="tabbar">
+      <button class="tab active" data-tab="scr-report">
+        <span class="tab-num mono" id="tab-leak-num">$0</span>
+        <span class="tab-label">LEAKS</span>
+      </button>
+      <button class="tab" data-tab="scr-kill">
+        <span class="tab-num mono" id="tab-kill-num">×0</span>
+        <span class="tab-label">KILL</span>
+      </button>
+      <button class="tab" data-tab="scr-saved">
+        <span class="tab-num mono accent" id="tab-save-num">$0</span>
+        <span class="tab-label">SAVED</span>
+      </button>
+      <button class="tab" data-tab="scr-you">
+        <span class="tab-num mono">YOU</span>
+        <span class="tab-label">MORE</span>
+      </button>
+    </nav>
+
+    <div class="noise" aria-hidden="true"></div>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

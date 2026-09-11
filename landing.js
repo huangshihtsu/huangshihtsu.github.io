@@ -31,10 +31,9 @@ const statsObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.hm-num').forEach((el) => statsObserver.observe(el));
 
-/* ---------- waitlist (Supabase backend + local fallback) ---------- */
+/* ---------- waitlist (Supabase backend + real count via count-only RPC) ---------- */
 
 const WL_KEY = 'subpocalypse.waitlist';
-const BASE_COUNT = 4841; // display base — replace with real count once API exposes it
 const SB_URL = 'https://cginoxngltunrfdmoodu.supabase.co';
 const SB_KEY = 'sb_publishable_6q-GPW_kWz7vI_bom1vyGA_jFfno5sE';
 const SB_TABLE = 'subpocalypse_waitlist';
@@ -45,12 +44,35 @@ function getList() {
 }
 
 const countEl = document.getElementById('wl-count');
+let remoteCount = null; // real headcount from the count-only RPC; null until first fetch
+
+function currentCount() {
+  return remoteCount !== null ? remoteCount : getList().length;
+}
 
 function renderCount(animate) {
-  const total = BASE_COUNT + getList().length;
+  const total = currentCount();
   if (animate) countUpEl(countEl, total, { dur: 900 });
   else countEl.textContent = total.toLocaleString('en-US');
 }
+
+async function fetchRemoteCount() {
+  const res = await fetch(`${SB_URL}/rest/v1/rpc/waitlist_count`, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': `Bearer ${SB_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: '{}',
+  });
+  if (!res.ok) throw new Error('rpc ' + res.status);
+  return await res.json();
+}
+
+fetchRemoteCount()
+  .then((n) => { remoteCount = n; renderCount(false); })
+  .catch(() => { /* offline or backend hiccup — local fallback stays */ });
 
 async function postToSupabase(email) {
   const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}`, {
@@ -64,7 +86,7 @@ async function postToSupabase(email) {
     body: JSON.stringify({ email }),
   });
   // 201 = joined · 409 = already on the list (unique constraint) — both are success
-  if (res.status === 201 || res.status === 409) return true;
+  if (res.status === 201 || res.status === 409) return res.status;
   throw new Error('supabase ' + res.status);
 }
 
@@ -81,7 +103,8 @@ document.getElementById('wl-form').addEventListener('submit', async (e) => {
   }
 
   try {
-    await postToSupabase(email);
+    const status = await postToSupabase(email);
+    if (status === 201 && remoteCount !== null) remoteCount++;
   } catch (err) {
     // offline or backend hiccup — the local copy above is the safety net
     console.warn('waitlist: stored locally, will need manual sync', err);
@@ -90,7 +113,7 @@ document.getElementById('wl-form').addEventListener('submit', async (e) => {
   document.getElementById('wl-form').classList.add('hidden');
   const ok = document.getElementById('wl-success');
   ok.classList.remove('hidden');
-  document.getElementById('wl-num').textContent = (BASE_COUNT + list.length).toLocaleString('en-US');
+  document.getElementById('wl-num').textContent = currentCount().toLocaleString('en-US');
   renderCount(true);
 });
 
@@ -98,7 +121,7 @@ document.getElementById('wl-form').addEventListener('submit', async (e) => {
 if (getList().length) {
   document.getElementById('wl-form').classList.add('hidden');
   document.getElementById('wl-success').classList.remove('hidden');
-  document.getElementById('wl-num').textContent = (BASE_COUNT + getList().length).toLocaleString('en-US');
+  document.getElementById('wl-num').textContent = currentCount().toLocaleString('en-US');
 }
 
 renderCount(false);
